@@ -60,7 +60,7 @@ def PlayHumanVsAi(board):
                 except:
                     print("Invalid input. Please enter row and column numbers separated by a space.")
         else:
-            print("AI is thinking...")
+            print("AI is thinking")
             GetAiMove(board, aiPlayer=Player2)
 
         currentPlayer = Player2 if currentPlayer == Player1 else Player1
