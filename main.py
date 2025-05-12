@@ -1,5 +1,5 @@
 from Board import Size, Empty, Player1, Player2
-from Engine import PlayHumanVsAi
+from Engine import PlayHumanVsAi, PlayAiVsAi
 
 def main():
     board = [[Empty for _ in range(Size)] for _ in range(Size)]
@@ -25,7 +25,18 @@ def main():
         board = board_state
         print("Initial board:")
 
-    PlayHumanVsAi(board)
+    print("\nChoose game mode:")
+    print("1: Human vs AI")
+    print("2: AI vs AI (Minimax vs AlphaBeta)")
+    mode = input("Enter your choice (1 or 2): ").strip()
+
+    if mode == "1":
+        PlayHumanVsAi(board)
+    elif mode == "2":
+        PlayAiVsAi(board)
+    else:
+        print("Invalid choice. Defaulting to Human vs AI.")
+        PlayHumanVsAi(board)
 
 if __name__ == "__main__":
     main()
