@@ -43,3 +43,66 @@ def GetCandidateMoves(board):
     if not candidates:
         return [(Size // 2, Size // 2)]
     return list(candidates)
+
+def count_sequence(board, i, j, dx, dy, player):
+    count = 1  # the placed mark
+    # go forward
+    x, y = i + dx, j + dy
+    while 0 <= x < Size and 0 <= y < Size and board[x][y] == player:
+        count += 1
+        x += dx
+        y += dy
+    # go backward
+    x, y = i - dx, j - dy
+    while 0 <= x < Size and 0 <= y < Size and board[x][y] == player:
+        count += 1
+        x -= dx
+        y -= dy
+    return count
+
+def evaluate_strength(board, i, j, player):
+    directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
+    max_streak = 1
+    for dx, dy in directions:
+        streak = count_sequence(board, i, j, dx, dy, player)
+        max_streak = max(max_streak, streak)
+    return max_streak
+
+def strength_to_score(strength, is_O):
+    if strength >= 5:
+        return 5 if is_O else -5
+    elif strength == 4:
+        return 4 if is_O else -4
+    elif strength == 3:
+        return 3 if is_O else -3
+    elif strength == 2:
+        return 2 if is_O else -2
+    else:
+        return 0
+
+def ScoreCandidateMoves(board):
+    candidates = GetCandidateMoves(board)
+    scored_moves = []
+
+    for i, j in candidates:
+        board_copy = [row[:] for row in board]
+
+        # Score for X
+        board_copy[i][j] = Player1
+        x_strength = evaluate_strength(board_copy, i, j, Player1)
+
+        # Score for O
+        board_copy[i][j] = Player2
+        o_strength = evaluate_strength(board_copy, i, j, Player2)
+
+        # Choose the stronger one and set sign accordingly
+        if o_strength > x_strength:
+            score = strength_to_score(o_strength, is_O=True)
+        elif x_strength > o_strength:
+            score = strength_to_score(x_strength, is_O=False)
+        else:
+            score = 0
+
+        scored_moves.append(((i, j), score))
+
+    return scored_moves
