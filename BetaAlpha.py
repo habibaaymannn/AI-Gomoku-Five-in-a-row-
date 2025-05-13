@@ -1,5 +1,6 @@
 import math
-from Board import GetCandidateMoves, EvalFunction, Empty, Player1, Player2
+from Board import  EvalFunction, Empty, Player1, Player2, ScoreCandidateMoves
+
 
 def BetaAlpha(board, depth, maxPlayer, depthLimit, alpha=-math.inf, beta=math.inf):
     score = EvalFunction(board)
@@ -7,10 +8,13 @@ def BetaAlpha(board, depth, maxPlayer, depthLimit, alpha=-math.inf, beta=math.in
         return score, None
 
     bestMove = None
+    scored_moves = ScoreCandidateMoves(board)
+    scored_moves.sort(key=lambda x: -x[1] if maxPlayer else x[1]) 
+
     if maxPlayer:
         maxEval = -math.inf
-        for move in GetCandidateMoves(board):
-            board[move[0]][move[1]] = Player1
+        for move, _ in scored_moves:
+            board[move[0]][move[1]] = Player2
             evaluate, _ = BetaAlpha(board, depth - 1, False, depthLimit, alpha, beta)
             board[move[0]][move[1]] = Empty
             if evaluate > maxEval:
@@ -22,8 +26,8 @@ def BetaAlpha(board, depth, maxPlayer, depthLimit, alpha=-math.inf, beta=math.in
         return maxEval, bestMove
     else:
         minEval = math.inf
-        for move in GetCandidateMoves(board):
-            board[move[0]][move[1]] = Player2
+        for move, _ in scored_moves:
+            board[move[0]][move[1]] = Player1
             evaluate, _ = BetaAlpha(board, depth - 1, True, depthLimit, alpha, beta)
             board[move[0]][move[1]] = Empty
             if evaluate < minEval:
