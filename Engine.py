@@ -18,6 +18,22 @@ def PrintBoard(board):
 def GetAvailableMoves(board):
     return [(i, j) for i in range(Size) for j in range(Size) if board[i][j] == Empty]
 
+def GetAiMove(board, algorithm="minimax", aiPlayer=Player2):
+    isMax = (aiPlayer == Player2)
+    if algorithm.lower() == "minimax":
+        _, move = Minimax(board, DepthLimit, isMax, DepthLimit)
+    elif algorithm.lower() == "alphabeta":
+        _, move = BetaAlpha(board, DepthLimit, isMax, DepthLimit)
+    else:
+        raise NotImplementedError("Algorithm not supported.")
+
+    if move:
+        board[move[0]][move[1]] = aiPlayer
+        print(f"AI ({aiPlayer}, {algorithm}) played at: {move}")
+    else:
+        print("No valid moves found.")
+    return move
+
 def PlayHumanVsAi(board):
     currentPlayer = Player1
 
@@ -52,22 +68,6 @@ def PlayHumanVsAi(board):
             GetAiMove(board, aiPlayer=Player2)
 
         currentPlayer = Player2 if currentPlayer == Player1 else Player1
-
-def GetAiMove(board, algorithm="minimax", aiPlayer=Player2):
-    isMax = (aiPlayer == Player1)
-    if algorithm.lower() == "minimax":
-        _, move = Minimax(board, DepthLimit, isMax, DepthLimit)
-    elif algorithm.lower() == "alphabeta":
-        _, move = BetaAlpha(board, DepthLimit, isMax, DepthLimit)
-    else:
-        raise NotImplementedError("Algorithm not supported.")
-
-    if move:
-        board[move[0]][move[1]] = aiPlayer
-        print(f"AI ({aiPlayer}, {algorithm}) played at: {move}")
-    else:
-        print("No valid moves found.")
-    return move
 
 def PlayAiVsAi(board):
     currentPlayer = Player1

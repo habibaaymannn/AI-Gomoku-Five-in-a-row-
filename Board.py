@@ -148,9 +148,7 @@ def getScore(board, for_player, players_turn):
             evalDiagonal(board, for_player, players_turn))
 
 def GetCandidateMoves(board):
-    directions = [(-1, -1), (-1, 0), (-1, 1),
-                  (0, -1),         (0, 1),
-                  (1, -1), (1, 0), (1, 1)]
+    directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
     candidates = set()
 
     for i in range(Size):
@@ -160,10 +158,20 @@ def GetCandidateMoves(board):
                     ni, nj = i + dx, j + dy
                     if 0 <= ni < Size and 0 <= nj < Size and board[ni][nj] == Empty:
                         candidates.add((ni, nj))
-
     if not candidates:
         return [(Size // 2, Size // 2)]
-    return list(candidates)
+    def score_move(move):
+        i, j = move
+        score = 0
+        for dx, dy in directions:
+            ni, nj = i + dx, j + dy
+            if 0 <= ni < Size and 0 <= nj < Size and board[ni][nj] != Empty:
+                score += 1
+        return score
+
+    candidate_list = list(candidates)
+    candidate_list.sort(key=score_move, reverse=True)
+    return candidate_list
 
 def evalBoard(board, players_turn):
     x_score = getScore(board, False, players_turn)
@@ -174,7 +182,6 @@ def evalBoard(board, players_turn):
     if o_score >= 100_000_000:
         return 1  # Player2 wins
 
-    # Prioritize blocking and winning moves
     block_weight = 1.5 if players_turn else 1.0
     win_weight = 2.0 if players_turn else 1.5
 
