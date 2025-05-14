@@ -18,19 +18,6 @@ def PrintBoard(board):
 def GetAvailableMoves(board):
     return [(i, j) for i in range(Size) for j in range(Size) if board[i][j] == Empty]
 
-def GetAiMove(board, algorithm="minimax", aiPlayer=Player2):
-    if algorithm.lower() != "minimax":
-        raise NotImplementedError("Only Minimax is implemented currently.")
-    isMax = (aiPlayer == Player1)
-    _, move = Minimax(board, DepthLimit, isMax, DepthLimit)
-
-    if move:
-        board[move[0]][move[1]] = aiPlayer
-        print(f"AI ({aiPlayer}) played at: {move}")
-    else:
-        print("No valid moves found.")
-    return move
-
 def PlayHumanVsAi(board):
     currentPlayer = Player1
 
